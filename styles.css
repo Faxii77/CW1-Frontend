@@ -1,5 +1,3 @@
-/* STYLES.CSS - COMMIT 8 - COMPLETE */
-
 /* --- PURE BLACK & WHITE THEME --- */
 :root {
     --pure-white: #FFFFFF;
@@ -23,6 +21,11 @@ body {
     color: var(--pure-white);
     padding: 20px;
     line-height: 1.6;
+    transition: background-color 0.5s ease;
+}
+
+body:hover {
+    background-color: var(--pure-white);
 }
 
 /* Main Application Container */
@@ -35,6 +38,7 @@ body {
     min-height: 95vh;
     border: 2px solid var(--pure-black);
     border-radius: 12px;
+    position: relative;
 }
 
 /* --- BUTTONS --- */
@@ -45,20 +49,38 @@ button {
     border-radius: 6px;
     font-weight: 600;
     font-size: 1rem;
-    background-color: var(--pure-black);
-    color: var(--pure-white);
+    transition: all 0.3s ease;
+    background-color: var(--pure-white);
+    color: var(--pure-black);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 button:hover:not(:disabled) {
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+button.primary-btn, .checkout-btn {
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+    border-color: var(--pure-black);
+}
+
+button.primary-btn:hover:not(:disabled), .checkout-btn:hover:not(:disabled) {
     background-color: var(--pure-white);
     color: var(--pure-black);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 button:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* --- INPUTS & SELECTS --- */
@@ -71,6 +93,7 @@ input, select {
     font-size: 1rem;
     background-color: var(--pure-white);
     color: var(--pure-black);
+    transition: all 0.3s ease;
     font-family: inherit;
 }
 
@@ -83,6 +106,7 @@ input:focus, select:focus {
     outline: none;
     border-color: var(--pure-black);
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
 }
 
 input:hover, select:hover {
@@ -108,6 +132,7 @@ input.error {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 30px;
+    /* border-bottom: 2px solid var(--pure-black);  <-- Removed line */
     margin-bottom: 40px;
 }
 
@@ -132,6 +157,18 @@ input.error {
     align-items: center;
     gap: 10px;
     white-space: nowrap;
+}
+
+.back-to-lessons-btn {
+    background-color: transparent;
+    border: 2px solid var(--medium-grey);
+    color: var(--medium-grey);
+}
+
+.back-to-lessons-btn:hover {
+    color: var(--pure-black);
+    border-color: var(--pure-black);
+    background-color: transparent;
 }
 
 /* --- CONTROLS --- */
@@ -165,12 +202,6 @@ input.error {
     margin: 0;
 }
 
-.sort-order-btn {
-    width: 100%;
-    padding: 14px;
-    white-space: nowrap;
-}
-
 /* --- LESSONS GRID --- */
 .lessons-grid {
     display: grid;
@@ -186,6 +217,33 @@ input.error {
     padding: 25px;
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.lesson-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--pure-black);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    border-color: var(--pure-black);
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+}
+
+.lesson-card:hover::before {
+    transform: scaleX(1);
 }
 
 .lesson-header {
@@ -194,17 +252,31 @@ input.error {
     margin-bottom: 20px;
     padding-bottom: 20px;
     border-bottom: 2px solid var(--pure-black);
+    transition: border-color 0.3s ease;
 }
 
+.lesson-card:hover .lesson-header {
+    border-bottom-color: var(--pure-white);
+}
+
+/* IMAGE ICONS (updated) */
 .lesson-icon {
-    font-size: 2rem;
+    width: 44px;
+    height: 44px;
     margin-right: 15px;
+    object-fit: contain;
+    filter: grayscale(100%);
 }
 
 .lesson-card h3 {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--pure-black);
+    transition: color 0.3s ease;
+}
+
+.lesson-card:hover h3 {
+    color: var(--pure-white);
 }
 
 .lesson-body {
@@ -233,11 +305,21 @@ input.error {
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.lesson-card:hover .lesson-label {
+    color: var(--light-grey);
 }
 
 .lesson-value {
     font-weight: 600;
     color: var(--pure-black);
+    transition: color 0.3s ease;
+}
+
+.lesson-card:hover .lesson-value {
+    color: var(--pure-white);
 }
 
 .lesson-value.price {
@@ -285,6 +367,15 @@ input.error {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+    transform: translateX(5px);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--pure-black);
+    background-color: var(--pure-black);
+    color: var(--pure-white);
 }
 
 .cart-item-left {
@@ -294,44 +385,43 @@ input.error {
     flex: 1;
 }
 
+/* IMAGE ICONS (updated) */
 .cart-item-icon {
-    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: grayscale(100%);
 }
 
 .cart-item-details h4 {
     font-size: 1.3rem;
     margin-bottom: 8px;
     color: var(--pure-black);
+    transition: color 0.3s ease;
+}
+
+.cart-item:hover .cart-item-details h4 {
+    color: var(--pure-white);
 }
 
 .cart-item-details p {
     color: var(--medium-grey);
     margin-bottom: 4px;
+    transition: color 0.3s ease;
 }
 
-/* Quantity Controls */
+.cart-item:hover .cart-item-details p {
+    color: var(--light-grey);
+}
+
 .cart-item-quantity {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
     font-weight: 600;
     color: var(--pure-black);
+    transition: color 0.3s ease;
 }
 
-.quantity-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-}
-
-.quantity-btn:hover {
-    transform: scale(1.1);
+.cart-item:hover .cart-item-quantity {
+    color: var(--pure-white);
 }
 
 .cart-item-right {
@@ -346,6 +436,11 @@ input.error {
     font-weight: 700;
     color: var(--pure-black);
     margin-bottom: 8px;
+    transition: color 0.3s ease;
+}
+
+.cart-item:hover .cart-item-price {
+    color: var(--pure-white);
 }
 
 .remove-btn {
@@ -359,6 +454,7 @@ input.error {
 .remove-btn:hover {
     background-color: var(--error-red);
     color: var(--pure-white);
+    transform: translateY(-2px);
 }
 
 /* --- CHECKOUT SECTION --- */
@@ -393,11 +489,6 @@ input.error {
     font-size: 2rem;
 }
 
-/* --- CHECKOUT FORM --- */
-.checkout-form {
-    margin-top: 30px;
-}
-
 .checkout-form h3 {
     font-size: 1.5rem;
     margin-bottom: 20px;
@@ -420,119 +511,14 @@ input.error {
     letter-spacing: 0.5px;
 }
 
-.checkbox-group {
-    margin: 20px 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.checkbox-group input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-.checkbox-group label {
-    margin: 0;
-    font-weight: 600;
-    text-transform: none;
-    cursor: pointer;
-}
-
-.radio-group {
-    margin: 20px 0;
-}
-
-.radio-group > label {
-    display: block;
-    margin-bottom: 12px;
-    font-weight: 600;
-    color: var(--pure-black);
-    text-transform: uppercase;
-    font-size: 0.9rem;
-}
-
-.radio-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-right: 20px;
-    margin-bottom: 10px;
-}
-
-.radio-inline input[type="radio"] {
-    width: auto;
-    margin: 0;
-    cursor: pointer;
-}
-
-.radio-inline label {
-    margin: 0;
-    font-weight: 600;
-    text-transform: none;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-/* --- ORDER SUMMARY --- */
-.order-summary {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border: 2px solid var(--pure-black);
-    border-radius: 8px;
-    margin-top: 30px;
-}
-
-.order-summary h3 {
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    color: var(--pure-black);
-    border-bottom: 2px solid var(--pure-black);
-    padding-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.order-summary p {
-    margin: 8px 0;
-    font-size: 1rem;
-    color: var(--pure-black);
-}
-
-.order-summary strong {
-    color: var(--pure-black);
-    font-weight: 700;
-    margin-right: 8px;
-}
-
-/* --- BUTTON GROUP (NEW IN COMMIT 8) --- */
-.button-group {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
-}
-
-.button-group button {
-    flex: 1;
-}
-
 .checkout-btn {
     width: 100%;
+    margin-top: 30px;
     padding: 18px;
     font-size: 1.2rem;
 }
 
-.primary-btn {
-    background-color: var(--pure-black);
-    color: var(--pure-white);
-}
-
-.primary-btn:hover:not(:disabled) {
-    background-color: var(--pure-white);
-    color: var(--pure-black);
-}
-
-/* --- SUCCESS MESSAGE (NEW IN COMMIT 8) --- */
+/* --- SUCCESS MESSAGE --- */
 .success-message {
     margin-top: 30px;
     padding: 25px;
@@ -609,10 +595,6 @@ input.error {
         flex-direction: row;
         justify-content: space-between;
         margin-top: 15px;
-    }
-    
-    .button-group {
-        flex-direction: column;
     }
 }
 

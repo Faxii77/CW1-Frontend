@@ -1,26 +1,26 @@
-// APP.JS - COMMIT 7 - COMPLETE
 const { createApp } = Vue;
 
 createApp({
     data() {
         return {
             lessons: [
-                { id: 1,  subject: 'Mathematics',         location: 'Al Barsha',            price: 100, spaces: 5 },
-                { id: 2,  subject: 'English',             location: 'Al Danah',             price: 80,  spaces: 5 },
-                { id: 3,  subject: 'Science',             location: 'Burjman',              price: 90,  spaces: 5 },
-                { id: 4,  subject: 'History',             location: 'Deira',                price: 95,  spaces: 5 },
-                { id: 5,  subject: 'Geography',           location: 'Dubai Internet City',  price: 85,  spaces: 5 },
-                { id: 6,  subject: 'Art',                 location: 'Sports City',          price: 75,  spaces: 5 },
-                { id: 7,  subject: 'Music',               location: 'Motor City',           price: 110, spaces: 5 },
-                { id: 8,  subject: 'Physical Education',  location: 'International City',   price: 70,  spaces: 5 },
-                { id: 9,  subject: 'Computer Science',    location: 'Al Nadaha',            price: 120, spaces: 5 },
-                { id: 10, subject: 'Chemistry',           location: 'Business Bay',         price: 105, spaces: 5 }
+                { id: 1,  subject: 'Mathematics',         location: 'Al Barsha',            price: 100, spaces: 5, icon: 'math.png' },
+                { id: 2,  subject: 'English',             location: 'Al Danah',             price: 80,  spaces: 5, icon: 'english.png' },
+                { id: 3,  subject: 'Science',             location: 'Burjman',              price: 90,  spaces: 5, icon: 'science.png' },
+                { id: 4,  subject: 'History',             location: 'Deira',                price: 95,  spaces: 5, icon: 'history.png' },
+                { id: 5,  subject: 'Geography',           location: 'Dubai Internet City',  price: 85,  spaces: 5, icon: 'geography.png' },
+                { id: 6,  subject: 'Art',                 location: 'Sports City',          price: 75,  spaces: 5, icon: 'art.png' },
+                { id: 7,  subject: 'Music',               location: 'Motor City',           price: 110, spaces: 5, icon: 'music.png' },
+                { id: 8,  subject: 'Physical Education',  location: 'International City',   price: 70,  spaces: 5, icon: 'pe.png' },
+                { id: 9,  subject: 'Computer Science',    location: 'Al Nadaha',            price: 120, spaces: 5, icon: 'cs.png' },
+                { id: 10, subject: 'Chemistry',           location: 'Business Bay',         price: 105, spaces: 5, icon: 'chemistry.png' }
             ],
             cart: [],
             showCart: false,
-            searchQuery: '',
             sortBy: 'subject',
             sortOrder: 'asc',
+            searchQuery: '',
+            orderConfirmed: false,
             order: {
                 firstName: '',
                 lastName: '',
@@ -71,6 +71,20 @@ createApp({
     },
 
     methods: {
+        // Optional: use in <img @error="imgError"> to show a placeholder if an icon is missing
+       imgError(e) {
+  // Prevent blinking by checking if it's already using the fallback
+  if (!e.target.src.includes('placeholder.png')) {
+    e.target.src = 'images/placeholder.png';
+  }
+  e.target.onerror = null; // prevent infinite loop
+}
+,
+
+        toggleView() {
+            this.showCart = !this.showCart;
+        },
+
         toggleSortOrder() {
             this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
         },
@@ -131,6 +145,39 @@ createApp({
             }
 
             this.isFormValid = Object.keys(this.errors).length === 0;
+        },
+
+        submitOrder() {
+            this.checkFormValidity();
+
+            if (this.cart.length === 0) {
+                alert("Your cart is empty.");
+                return;
+            }
+
+            if (!this.isFormValid) {
+                alert("Please fill out all required fields correctly.");
+                return;
+            }
+
+            this.orderConfirmed = true;
+
+            setTimeout(() => {
+                this.cart = [];
+                this.order = {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    gift: false,
+                    method: 'Home'
+                };
+                this.orderConfirmed = false;
+                this.showCart = false;
+                this.isFormValid = false;
+            }, 3000);
         }
     }
 }).mount('#app');

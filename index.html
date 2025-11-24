@@ -1,22 +1,21 @@
-<!-- ==================== INDEX.HTML - COMMIT 8 ==================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>After-School Lessons Booking</title>
+    <title>After-School Lessons Booking (Monochrome)</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="inverted-container">
+        <!-- Header -->
         <div class="header">
             <div>
                 <h1>After-School Lessons</h1>
                 <p>Book your perfect learning experience</p>
             </div>
-            <!-- MODIFIED: Added :disabled for orderConfirmed -->
             <button class="cart-btn" @click="showCart = !showCart" :disabled="orderConfirmed">
                 <span>{{ showCart ? '← Back to Lessons' : `🛒 Cart (${cartItemCount})` }}</span>
             </button>
@@ -45,7 +44,8 @@
             <div class="lessons-grid">
                 <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson-card">
                     <div class="lesson-header">
-                        <span class="lesson-icon">📚</span>
+                        <!-- ✅ Changed to image icons -->
+                        <img :src="`images/${lesson.icon}`" :alt="lesson.subject" class="lesson-icon" @error="imgError">
                         <h3>{{ lesson.subject }}</h3>
                     </div>
                     <div class="lesson-body">
@@ -65,7 +65,7 @@
                                 </span>
                             </div>
                         </div>
-                        <button class="add-btn" @click="addToCart(lesson.id)" :disabled="lesson.spaces === 0">
+                        <button class="add-btn primary-btn" @click="addToCart(lesson.id)" :disabled="lesson.spaces === 0">
                             {{ lesson.spaces > 0 ? 'Add to Cart' : 'Sold Out' }}
                         </button>
                     </div>
@@ -84,7 +84,8 @@
             <div v-else>
                 <div v-for="item in cart" :key="item.id" class="cart-item">
                     <div class="cart-item-left">
-                        <span class="cart-item-icon">📚</span>
+                        <!-- ✅ Changed to image icons -->
+                        <img :src="`images/${item.icon}`" :alt="item.subject" class="cart-item-icon" @error="imgError">
                         <div class="cart-item-details">
                             <h4>{{ item.subject }}</h4>
                             <p>{{ item.location }} - Price: £{{ item.price }}</p>
@@ -169,30 +170,28 @@
 
                         <div class="order-summary">
                             <h3>Order Summary</h3>
-                            <p><strong>First Name:</strong> {{ order.firstName || 'N/A' }}</p>
-                            <p><strong>Last Name:</strong> {{ order.lastName || 'N/A' }}</p>
-                            <p><strong>Address:</strong> {{ order.address || 'N/A' }}</p>
-                            <p><strong>City:</strong> {{ order.city || 'N/A' }}</p>
-                            <p><strong>State:</strong> {{ order.state || 'N/A' }}</p>
-                            <p><strong>Zip:</strong> {{ order.zip || 'N/A' }}</p>
+                            <p><strong>First Name:</strong> {{ order.firstName }}</p>
+                            <p><strong>Last Name:</strong> {{ order.lastName }}</p>
+                            <p><strong>Address:</strong> {{ order.address }}</p>
+                            <p><strong>City:</strong> {{ order.city }}</p>
+                            <p><strong>State:</strong> {{ order.state }}</p>
+                            <p><strong>Zip:</strong> {{ order.zip }}</p>
                             <p><strong>Delivery Method:</strong> {{ order.method }}</p>
                             <p><strong>Gift:</strong> {{ order.gift ? 'Yes' : 'No' }}</p>
                             <p><strong>Items in Cart:</strong> {{ cartItemCount }}</p>
                         </div>
 
-                        <!-- NEW IN COMMIT 8: Button Group and Success Message -->
                         <div class="button-group">
                             <button class="checkout-btn primary-btn" @click="submitOrder" :disabled="!isFormValid">
                                 Place Order
                             </button>
-                            <button class="checkout-btn" @click="showCart = false">Continue Shopping</button>
+                            <button class="checkout-btn" @click="toggleView">Continue Shopping</button>
                         </div>
 
                         <div v-if="orderConfirmed" class="success-message">
                             <p>✓ Order successfully submitted! Thank you for your booking.</p>
                             <p>The lessons are now secured and spaces have been updated.</p>
                         </div>
-
                     </div>
                 </div>
 
