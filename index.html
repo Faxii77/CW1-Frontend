@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>After-School Lessons Booking (Monochrome)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="inverted-container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>After-School Lessons</h1>
+                <p>Book your perfect learning experience</p>
+            </div>
+            <button class="cart-btn" @click="showCart = !showCart" :disabled="orderConfirmed">
+                <span>{{ showCart ? '← Back to Lessons' : `🛒 Cart (${cartItemCount})` }}</span>
+            </button>
+        </div>
+
+        <!-- Lessons View -->
+        <div v-if="!showCart">
+            <div class="controls">
+                <div class="controls-grid">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" v-model="searchQuery" placeholder="Search lessons..." />
+                    </div>
+                    <select v-model="sortBy">
+                        <option value="subject">Sort by Subject</option>
+                        <option value="location">Sort by Location</option>
+                        <option value="price">Sort by Price</option>
+                        <option value="spaces">Sort by Availability</option>
+                    </select>
+                    <button class="sort-order-btn" @click="toggleSortOrder">
+                        <span>Sort: {{ sortOrder === 'asc' ? 'Ascending (↑)' : 'Descending (↓)' }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="lessons-grid">
+                <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson-card">
+                    <div class="lesson-header">
+                        <!--  Changed to image icons -->
+                        <img :src="`images/${lesson.icon}`" :alt="lesson.subject" class="lesson-icon" @error="imgError">
+                        <h3>{{ lesson.subject }}</h3>
+                    </div>
+                    <div class="lesson-body">
+                        <div class="lesson-info">
+                            <div class="lesson-row">
+                                <span class="lesson-label">Location:</span>
+                                <span class="lesson-value">{{ lesson.location }}</span>
+                            </div>
+                            <div class="lesson-row">
+                                <span class="lesson-label">Price:</span>
+                                <span class="lesson-value price">£{{ lesson.price }}</span>
+                            </div>
+                            <div class="lesson-row">
+                                <span class="lesson-label">Available:</span>
+                                <span class="lesson-value spaces" :class="{ 'sold-out': lesson.spaces === 0 }">
+                                    {{ lesson.spaces }} {{ lesson.spaces === 1 ? 'space' : 'spaces' }}
+                                </span>
+                            </div>
+                        </div>
+                        <button class="add-btn primary-btn" @click="addToCart(lesson.id)" :disabled="lesson.spaces === 0">
+                            {{ lesson.spaces > 0 ? 'Add to Cart' : 'Sold Out' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart View -->
+        <div v-else class="cart-container">
+            <h2>Shopping Cart & Checkout</h2>
+            
+            <div v-if="cart.length === 0" class="cart-empty">
+                Your cart is empty. Add some lessons to proceed!
+            </div>
+            
+            <div v-else>
+                <div v-for="item in cart" :key="item.id" class="cart-item">
+                    <div class="cart-item-left">
+                        <!--  Changed to image icons -->
+                        <img :src="`images/${item.icon}`" :alt="item.subject" class="cart-item-icon" @error="imgError">
+                        <div class="cart-item-details">
+                            <h4>{{ item.subject }}</h4>
+                            <p>{{ item.location }} - Price: £{{ item.price }}</p>
+                            <div class="cart-item-quantity">
+                                <button class="quantity-btn" @click="decreaseQuantity(item.id)">−</button>
+                                <span>{{ item.quantity }}</span>
+                                <button class="quantity-btn" @click="addToCart(item.id)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cart-item-right">
+                        <div class="cart-item-price">£{{ item.price * item.quantity }}</div>
+                        <button class="remove-btn" @click="removeFromCart(item.id)">[X] Remove</button>
+                    </div>
+                </div>
+
+                <!-- Checkout Form -->
+                <div class="cart-total">
+                    <div class="total-row">
+                        <span class="total-label">Total Due:</span>
+                        <span class="total-amount">£{{ cartTotal }}</span>
+                    </div>
+
+                    <div class="checkout-form">
+                        <h3>Customer Details</h3>
+
+                        <div class="form-group">
+                            <label>First Name: *</label>
+                            <input type="text" v-model="order.firstName" @blur="checkFormValidity" placeholder="Enter first name" :class="{ error: errors.firstName }">
+                            <div v-if="errors.firstName" class="error-message">{{ errors.firstName }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Last Name: *</label>
+                            <input type="text" v-model="order.lastName" @blur="checkFormValidity" placeholder="Enter last name" :class="{ error: errors.lastName }">
+                            <div v-if="errors.lastName" class="error-message">{{ errors.lastName }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Address: *</label>
+                            <input type="text" v-model="order.address" @blur="checkFormValidity" placeholder="Enter address" :class="{ error: errors.address }">
+                            <div v-if="errors.address" class="error-message">{{ errors.address }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>City: *</label>
+                            <input type="text" v-model="order.city" @blur="checkFormValidity" placeholder="Enter city" :class="{ error: errors.city }">
+                            <div v-if="errors.city" class="error-message">{{ errors.city }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>State: *</label>
+                            <select v-model="order.state" @change="checkFormValidity" :class="{ error: errors.state }">
+                                <option disabled value="">Select State</option>
+                                <option v-for="state in states" :value="state">{{ state }}</option>
+                            </select>
+                            <div v-if="errors.state" class="error-message">{{ errors.state }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Zip/Postal Code: *</label>
+                            <input type="text" v-model="order.zip" @blur="checkFormValidity" placeholder="Enter zip code" :class="{ error: errors.zip }">
+                            <div v-if="errors.zip" class="error-message">{{ errors.zip }}</div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="gift" v-model="order.gift">
+                            <label for="gift">This is a gift</label>
+                        </div>
+
+                        <div class="radio-group">
+                            <label>Delivery Method:</label>
+                            <div class="radio-inline">
+                                <input type="radio" id="home" value="Home" v-model="order.method">
+                                <label for="home">Home</label>
+                            </div>
+                            <div class="radio-inline">
+                                <input type="radio" id="business" value="Business" v-model="order.method">
+                                <label for="business">Business</label>
+                            </div>
+                        </div>
+
+                        <div class="order-summary">
+                            <h3>Order Summary</h3>
+                            <p><strong>First Name:</strong> {{ order.firstName }}</p>
+                            <p><strong>Last Name:</strong> {{ order.lastName }}</p>
+                            <p><strong>Address:</strong> {{ order.address }}</p>
+                            <p><strong>City:</strong> {{ order.city }}</p>
+                            <p><strong>State:</strong> {{ order.state }}</p>
+                            <p><strong>Zip:</strong> {{ order.zip }}</p>
+                            <p><strong>Delivery Method:</strong> {{ order.method }}</p>
+                            <p><strong>Gift:</strong> {{ order.gift ? 'Yes' : 'No' }}</p>
+                            <p><strong>Items in Cart:</strong> {{ cartItemCount }}</p>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="checkout-btn primary-btn" @click="submitOrder" :disabled="!isFormValid">
+                                Place Order
+                            </button>
+                            <button class="checkout-btn" @click="toggleView">Continue Shopping</button>
+                        </div>
+
+                        <div v-if="orderConfirmed" class="success-message">
+                            <p>✓ Order successfully submitted! Thank you for your booking.</p>
+                            <p>The lessons are now secured and spaces have been updated.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
