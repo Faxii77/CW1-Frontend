@@ -1,4 +1,4 @@
-<!-- INDEX.HTML - COMMIT 3 -->
+<!-- INDEX.HTML - COMMIT 4 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,16 +23,26 @@
 
         <!-- Lessons View -->
         <div v-if="!showCart">
-            <!-- NEW: Search Box -->
+            <!-- MODIFIED: Added sort controls -->
             <div class="controls">
-                <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" v-model="searchQuery" placeholder="Search lessons by subject or location..." />
+                <div class="controls-grid">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" v-model="searchQuery" placeholder="Search lessons..." />
+                    </div>
+                    <select v-model="sortBy">
+                        <option value="subject">Sort by Subject</option>
+                        <option value="location">Sort by Location</option>
+                        <option value="price">Sort by Price</option>
+                        <option value="spaces">Sort by Availability</option>
+                    </select>
+                    <button class="sort-order-btn" @click="toggleSortOrder">
+                        <span>Sort: {{ sortOrder === 'asc' ? 'Ascending (↑)' : 'Descending (↓)' }}</span>
+                    </button>
                 </div>
             </div>
 
             <div class="lessons-grid">
-                <!-- Changed: lessons -> filteredLessons -->
                 <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson-card">
                     <div class="lesson-header">
                         <span class="lesson-icon">📚</span>
@@ -63,7 +73,7 @@
             </div>
         </div>
 
-        <!-- Cart View -->
+        <!-- Cart View (unchanged) -->
         <div v-else class="cart-container">
             <h2>Shopping Cart</h2>
             

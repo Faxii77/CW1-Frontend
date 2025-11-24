@@ -1,4 +1,4 @@
-// APP.JS - COMMIT 3
+// APP.JS - COMMIT 4
 const { createApp } = Vue;
 
 createApp({
@@ -18,16 +18,33 @@ createApp({
             ],
             cart: [],
             showCart: false,
-            searchQuery: ''  // NEW
+            searchQuery: '',
+            sortBy: 'subject',      // NEW
+            sortOrder: 'asc'        // NEW
         };
     },
 
     computed: {
-        // NEW: Filter lessons based on search
+        // NEW: Sort lessons
+        sortedLessons() {
+            return [...this.lessons].sort((a, b) => {
+                let compareA = a[this.sortBy];
+                let compareB = b[this.sortBy];
+                if (typeof compareA === 'string') {
+                    compareA = compareA.toLowerCase();
+                    compareB = compareB.toLowerCase();
+                }
+                if (compareA > compareB) return this.sortOrder === 'asc' ? 1 : -1;
+                if (compareA < compareB) return this.sortOrder === 'asc' ? -1 : 1;
+                return 0;
+            });
+        },
+
+        // MODIFIED: Filter from sorted lessons
         filteredLessons() {
             const query = this.searchQuery.trim().toLowerCase();
-            if (!query) return this.lessons;
-            return this.lessons.filter(lesson =>
+            if (!query) return this.sortedLessons;
+            return this.sortedLessons.filter(lesson =>
                 lesson.subject.toLowerCase().includes(query) ||
                 lesson.location.toLowerCase().includes(query)
             );
@@ -43,6 +60,11 @@ createApp({
     },
 
     methods: {
+        // NEW: Toggle sort order
+        toggleSortOrder() {
+            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+        },
+
         addToCart(lessonId) {
             const lesson = this.lessons.find(l => l.id === lessonId);
             if (lesson && lesson.spaces > 0) {
