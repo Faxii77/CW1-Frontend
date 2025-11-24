@@ -1,5 +1,140 @@
+/* STYLES.CSS - COMMIT 6 - COMPLETE */
 
-/* MODIFIED: Controls Grid Layout */
+/* --- PURE BLACK & WHITE THEME --- */
+:root {
+    --pure-white: #FFFFFF;
+    --pure-black: #000000;
+    --dark-grey: #1a1a1a;
+    --medium-grey: #333333;
+    --light-grey: #CCCCCC;
+    --error-red: #FF4444;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Base style for the body */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Main Application Container */
+#app {
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: var(--pure-white);
+    color: var(--pure-black);
+    padding: 40px;
+    min-height: 95vh;
+    border: 2px solid var(--pure-black);
+    border-radius: 12px;
+}
+
+/* --- BUTTONS --- */
+button {
+    padding: 12px 24px;
+    cursor: pointer;
+    border: 2px solid var(--pure-black);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--pure-white);
+    color: var(--pure-black);
+}
+
+button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* --- INPUTS & SELECTS --- */
+input, select {
+    padding: 14px 16px;
+    width: 100%;
+    margin: 8px 0;
+    border: 2px solid var(--pure-black);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: var(--pure-white);
+    color: var(--pure-black);
+    font-family: inherit;
+}
+
+select {
+    height: 52px;
+    cursor: pointer;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--pure-black);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+input:hover, select:hover {
+    border-color: var(--medium-grey);
+}
+
+input.error {
+    border-color: var(--error-red);
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.2);
+}
+
+.error-message {
+    color: var(--error-red);
+    font-size: 0.875rem;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+/* --- HEADER --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--pure-black);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.header p {
+    font-size: 1rem;
+    color: var(--medium-grey);
+    margin: 0;
+}
+
+.cart-btn {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+/* --- CONTROLS --- */
 .controls-grid {
     display: grid;
     grid-template-columns: 2fr 1.5fr 1fr;
@@ -30,48 +165,374 @@
     margin: 0;
 }
 
-/* NEW: Select Dropdown Styles */
-select {
-    padding: 14px 16px;
-    width: 100%;
-    margin: 0;
-    border: 2px solid var(--pure-black);
-    border-radius: 6px;
-    font-size: 1rem;
-    background-color: var(--pure-white);
-    color: var(--pure-black);
-    font-family: inherit;
-    cursor: pointer;
-    height: 52px;
-}
-
-select:focus {
-    outline: none;
-    border-color: var(--pure-black);
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
-}
-
-select:hover {
-    border-color: var(--medium-grey);
-}
-
-/* NEW: Sort Order Button */
 .sort-order-btn {
     width: 100%;
     padding: 14px;
     white-space: nowrap;
 }
 
-/* Responsive adjustments */
+/* --- LESSONS GRID --- */
+.lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    margin: 0;
+}
+
+.lesson-card {
+    background-color: var(--pure-white);
+    border: 2px solid var(--pure-black);
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.lesson-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--pure-black);
+}
+
+.lesson-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.lesson-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--pure-black);
+}
+
+.lesson-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lesson-info {
+    margin-bottom: 20px;
+}
+
+.lesson-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    padding: 8px 0;
+}
+
+.lesson-label {
+    font-weight: 600;
+    color: var(--medium-grey);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.lesson-value {
+    font-weight: 600;
+    color: var(--pure-black);
+}
+
+.lesson-value.price {
+    font-size: 1.3rem;
+}
+
+.spaces.sold-out {
+    color: var(--error-red);
+    font-weight: 700;
+}
+
+.add-btn {
+    width: 100%;
+    margin-top: auto;
+    font-size: 1rem;
+    padding: 14px;
+}
+
+/* --- CART VIEW --- */
+.cart-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    border-bottom: 2px solid var(--pure-black);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    color: var(--pure-black);
+}
+
+.cart-empty {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--medium-grey);
+    background-color: var(--pure-white);
+    border: 2px dashed var(--pure-black);
+    border-radius: 8px;
+    font-size: 1.2rem;
+}
+
+.cart-item {
+    background-color: var(--pure-white);
+    border: 2px solid var(--pure-black);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.cart-item-icon {
+    font-size: 2rem;
+}
+
+.cart-item-details h4 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: var(--pure-black);
+}
+
+.cart-item-details p {
+    color: var(--medium-grey);
+    margin-bottom: 4px;
+}
+
+/* Quantity Controls */
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    font-weight: 600;
+    color: var(--pure-black);
+}
+
+.quantity-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.quantity-btn:hover {
+    transform: scale(1.1);
+}
+
+.cart-item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.cart-item-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--pure-black);
+    margin-bottom: 8px;
+}
+
+.remove-btn {
+    background-color: var(--pure-white);
+    color: var(--error-red);
+    border: 2px solid var(--error-red);
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+.remove-btn:hover {
+    background-color: var(--error-red);
+    color: var(--pure-white);
+}
+
+/* --- CHECKOUT SECTION --- */
+.cart-total {
+    background-color: var(--pure-white);
+    padding: 30px;
+    border: 2px solid var(--pure-black);
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5rem;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--pure-black);
+    margin-bottom: 30px;
+}
+
+.total-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--pure-black);
+}
+
+.total-amount {
+    color: var(--pure-black);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+/* --- CHECKOUT FORM (NEW IN COMMIT 6) --- */
+.checkout-form {
+    margin-top: 30px;
+}
+
+.checkout-form h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--pure-black);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--pure-black);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.checkbox-group {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.checkbox-group label {
+    margin: 0;
+    font-weight: 600;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.radio-group {
+    margin: 20px 0;
+}
+
+.radio-group > label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--pure-black);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.radio-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.radio-inline input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.radio-inline label {
+    margin: 0;
+    font-weight: 600;
+    text-transform: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* --- RESPONSIVE DESIGN --- */
 @media (max-width: 1024px) {
     .controls-grid {
         grid-template-columns: 1fr 1fr;
     }
-}
-
-@media (max-width: 768px) {
-    .controls-grid {
-        grid-template-columns: 1fr;
+    
+    .lessons-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
 
+@media (max-width: 768px) {
+    #app {
+        padding: 25px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .lessons-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .cart-item-right {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #app {
+        padding: 20px;
+    }
+    
+    .header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .total-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

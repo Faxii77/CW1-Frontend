@@ -1,4 +1,3 @@
-// APP.JS - COMMIT 5 (Add decreaseQuantity method)
 const { createApp } = Vue;
 
 createApp({
@@ -20,7 +19,21 @@ createApp({
             showCart: false,
             searchQuery: '',
             sortBy: 'subject',
-            sortOrder: 'asc'
+            sortOrder: 'asc',
+            // NEW: Order form data
+            order: {
+                firstName: '',
+                lastName: '',
+                address: '',
+                city: '',
+                state: '',
+                zip: '',
+                gift: false,
+                method: 'Home'
+            },
+            states: ['Fujairah', 'Umm al Quwain', 'Ras al Khaimah', 'Sharjah', 'Abu Dhabi', 'Ajman', 'Dubai'],
+            errors: {},
+            isFormValid: false
         };
     },
 
@@ -75,7 +88,6 @@ createApp({
             }
         },
 
-        // NEW: Decrease quantity method
         decreaseQuantity(lessonId) {
             const cartItem = this.cart.find(item => item.id === lessonId);
             const lesson = this.lessons.find(l => l.id === lessonId);
@@ -94,43 +106,32 @@ createApp({
                 lesson.spaces += cartItem.quantity;
                 this.cart = this.cart.filter(item => item.id !== lessonId);
             }
+        },
+
+        // NEW: Form validation
+        checkFormValidity() {
+            const requiredFields = ['firstName', 'lastName', 'address', 'city', 'state', 'zip'];
+            this.errors = {};
+
+            requiredFields.forEach(field => {
+                if (!this.order[field] || this.order[field].trim() === '') {
+                    this.errors[field] = 'This field is required';
+                }
+            });
+
+            if (this.order.firstName && !/^[A-Za-z\s]+$/.test(this.order.firstName)) {
+                this.errors.firstName = 'Invalid first name';
+            }
+
+            if (this.order.lastName && !/^[A-Za-z\s]+$/.test(this.order.lastName)) {
+                this.errors.lastName = 'Invalid last name';
+            }
+
+            if (this.order.zip && !/^[0-9]{4,10}$/.test(this.order.zip)) {
+                this.errors.zip = 'Invalid zip code';
+            }
+
+            this.isFormValid = Object.keys(this.errors).length === 0;
         }
     }
 }).mount('#app');
-
-/* 
-INDEX.HTML CHANGE FOR COMMIT 5:
-Replace the quantity display in cart with buttons:
-
-<div class="cart-item-quantity">
-    <button class="quantity-btn" @click="decreaseQuantity(item.id)">−</button>
-    <span>{{ item.quantity }}</span>
-    <button class="quantity-btn" @click="addToCart(item.id)">+</button>
-</div>
-*/
-
-/* 
-STYLES.CSS ADDITION FOR COMMIT 5:
-
-.cart-item-quantity {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
-}
-
-.quantity-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-}
-
-.quantity-btn:hover {
-    transform: scale(1.1);
-}
-*/
