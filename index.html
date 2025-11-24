@@ -1,4 +1,3 @@
-<!-- INDEX.HTML - COMMIT 4 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +22,6 @@
 
         <!-- Lessons View -->
         <div v-if="!showCart">
-            <!-- MODIFIED: Added sort controls -->
             <div class="controls">
                 <div class="controls-grid">
                     <div class="search-wrapper">
@@ -73,7 +71,7 @@
             </div>
         </div>
 
-        <!-- Cart View (unchanged) -->
+        <!-- Cart View -->
         <div v-else class="cart-container">
             <h2>Shopping Cart</h2>
             
@@ -88,7 +86,12 @@
                         <div class="cart-item-details">
                             <h4>{{ item.subject }}</h4>
                             <p>{{ item.location }} - Price: £{{ item.price }}</p>
-                            <p>Quantity: {{ item.quantity }}</p>
+                            <!-- CHANGED: Added quantity controls -->
+                            <div class="cart-item-quantity">
+                                <button class="quantity-btn" @click="decreaseQuantity(item.id)">−</button>
+                                <span>{{ item.quantity }}</span>
+                                <button class="quantity-btn" @click="addToCart(item.id)">+</button>
+                            </div>
                         </div>
                     </div>
                     <div class="cart-item-right">

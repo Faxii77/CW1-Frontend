@@ -1,4 +1,4 @@
-// APP.JS - COMMIT 4
+// APP.JS - COMMIT 5 (Add decreaseQuantity method)
 const { createApp } = Vue;
 
 createApp({
@@ -19,13 +19,12 @@ createApp({
             cart: [],
             showCart: false,
             searchQuery: '',
-            sortBy: 'subject',      // NEW
-            sortOrder: 'asc'        // NEW
+            sortBy: 'subject',
+            sortOrder: 'asc'
         };
     },
 
     computed: {
-        // NEW: Sort lessons
         sortedLessons() {
             return [...this.lessons].sort((a, b) => {
                 let compareA = a[this.sortBy];
@@ -40,7 +39,6 @@ createApp({
             });
         },
 
-        // MODIFIED: Filter from sorted lessons
         filteredLessons() {
             const query = this.searchQuery.trim().toLowerCase();
             if (!query) return this.sortedLessons;
@@ -60,7 +58,6 @@ createApp({
     },
 
     methods: {
-        // NEW: Toggle sort order
         toggleSortOrder() {
             this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
         },
@@ -78,6 +75,18 @@ createApp({
             }
         },
 
+        // NEW: Decrease quantity method
+        decreaseQuantity(lessonId) {
+            const cartItem = this.cart.find(item => item.id === lessonId);
+            const lesson = this.lessons.find(l => l.id === lessonId);
+            if (cartItem && cartItem.quantity > 1) {
+                cartItem.quantity--;
+                lesson.spaces++;
+            } else if (cartItem && cartItem.quantity === 1) {
+                this.removeFromCart(lessonId);
+            }
+        },
+
         removeFromCart(lessonId) {
             const cartItem = this.cart.find(item => item.id === lessonId);
             if (cartItem) {
@@ -88,3 +97,40 @@ createApp({
         }
     }
 }).mount('#app');
+
+/* 
+INDEX.HTML CHANGE FOR COMMIT 5:
+Replace the quantity display in cart with buttons:
+
+<div class="cart-item-quantity">
+    <button class="quantity-btn" @click="decreaseQuantity(item.id)">−</button>
+    <span>{{ item.quantity }}</span>
+    <button class="quantity-btn" @click="addToCart(item.id)">+</button>
+</div>
+*/
+
+/* 
+STYLES.CSS ADDITION FOR COMMIT 5:
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.quantity-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.quantity-btn:hover {
+    transform: scale(1.1);
+}
+*/
