@@ -1,4 +1,4 @@
-/* STYLES.CSS - COMMIT 7 - COMPLETE */
+/* STYLES.CSS - COMMIT 8 - COMPLETE */
 
 /* --- PURE BLACK & WHITE THEME --- */
 :root {
@@ -474,7 +474,7 @@ input.error {
     font-size: 1rem;
 }
 
-/* --- ORDER SUMMARY (NEW IN COMMIT 7) --- */
+/* --- ORDER SUMMARY --- */
 .order-summary {
     background-color: #f5f5f5;
     padding: 20px;
@@ -503,6 +503,66 @@ input.error {
     color: var(--pure-black);
     font-weight: 700;
     margin-right: 8px;
+}
+
+/* --- BUTTON GROUP (NEW IN COMMIT 8) --- */
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.button-group button {
+    flex: 1;
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 18px;
+    font-size: 1.2rem;
+}
+
+.primary-btn {
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+}
+
+.primary-btn:hover:not(:disabled) {
+    background-color: var(--pure-white);
+    color: var(--pure-black);
+}
+
+/* --- SUCCESS MESSAGE (NEW IN COMMIT 8) --- */
+.success-message {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: var(--pure-black);
+    color: var(--pure-white);
+    border: 2px solid var(--pure-black);
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    animation: slideIn 0.5s ease;
+}
+
+.success-message p {
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.success-message p:last-child {
+    margin-bottom: 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* --- RESPONSIVE DESIGN --- */
@@ -549,6 +609,10 @@ input.error {
         flex-direction: row;
         justify-content: space-between;
         margin-top: 15px;
+    }
+    
+    .button-group {
+        flex-direction: column;
     }
 }
 

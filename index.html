@@ -1,4 +1,4 @@
-<!-- ==================== INDEX.HTML - COMMIT 7 ==================== -->
+<!-- ==================== INDEX.HTML - COMMIT 8 ==================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +16,8 @@
                 <h1>After-School Lessons</h1>
                 <p>Book your perfect learning experience</p>
             </div>
-            <button class="cart-btn" @click="showCart = !showCart">
+            <!-- MODIFIED: Added :disabled for orderConfirmed -->
+            <button class="cart-btn" @click="showCart = !showCart" :disabled="orderConfirmed">
                 <span>{{ showCart ? '← Back to Lessons' : `🛒 Cart (${cartItemCount})` }}</span>
             </button>
         </div>
@@ -166,7 +167,6 @@
                             </div>
                         </div>
 
-                        <!-- NEW IN COMMIT 7: Order Summary -->
                         <div class="order-summary">
                             <h3>Order Summary</h3>
                             <p><strong>First Name:</strong> {{ order.firstName || 'N/A' }}</p>
@@ -178,6 +178,19 @@
                             <p><strong>Delivery Method:</strong> {{ order.method }}</p>
                             <p><strong>Gift:</strong> {{ order.gift ? 'Yes' : 'No' }}</p>
                             <p><strong>Items in Cart:</strong> {{ cartItemCount }}</p>
+                        </div>
+
+                        <!-- NEW IN COMMIT 8: Button Group and Success Message -->
+                        <div class="button-group">
+                            <button class="checkout-btn primary-btn" @click="submitOrder" :disabled="!isFormValid">
+                                Place Order
+                            </button>
+                            <button class="checkout-btn" @click="showCart = false">Continue Shopping</button>
+                        </div>
+
+                        <div v-if="orderConfirmed" class="success-message">
+                            <p>✓ Order successfully submitted! Thank you for your booking.</p>
+                            <p>The lessons are now secured and spaces have been updated.</p>
                         </div>
 
                     </div>
