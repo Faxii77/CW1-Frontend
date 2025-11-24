@@ -1,4 +1,4 @@
-<!-- INDEX.HTML - COMMIT 2 -->
+<!-- INDEX.HTML - COMMIT 3 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,8 +23,17 @@
 
         <!-- Lessons View -->
         <div v-if="!showCart">
+            <!-- NEW: Search Box -->
+            <div class="controls">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" v-model="searchQuery" placeholder="Search lessons by subject or location..." />
+                </div>
+            </div>
+
             <div class="lessons-grid">
-                <div v-for="lesson in lessons" :key="lesson.id" class="lesson-card">
+                <!-- Changed: lessons -> filteredLessons -->
+                <div v-for="lesson in filteredLessons" :key="lesson.id" class="lesson-card">
                     <div class="lesson-header">
                         <span class="lesson-icon">📚</span>
                         <h3>{{ lesson.subject }}</h3>
@@ -91,189 +100,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-
-<!-- APP.JS - COMMIT 2 -->
-<script>
-const { createApp } = Vue;
-
-createApp({
-    data() {
-        return {
-            lessons: [
-                { id: 1,  subject: 'Mathematics',         location: 'Al Barsha',            price: 100, spaces: 5 },
-                { id: 2,  subject: 'English',             location: 'Al Danah',             price: 80,  spaces: 5 },
-                { id: 3,  subject: 'Science',             location: 'Burjman',              price: 90,  spaces: 5 },
-                { id: 4,  subject: 'History',             location: 'Deira',                price: 95,  spaces: 5 },
-                { id: 5,  subject: 'Geography',           location: 'Dubai Internet City',  price: 85,  spaces: 5 },
-                { id: 6,  subject: 'Art',                 location: 'Sports City',          price: 75,  spaces: 5 },
-                { id: 7,  subject: 'Music',               location: 'Motor City',           price: 110, spaces: 5 },
-                { id: 8,  subject: 'Physical Education',  location: 'International City',   price: 70,  spaces: 5 },
-                { id: 9,  subject: 'Computer Science',    location: 'Al Nadaha',            price: 120, spaces: 5 },
-                { id: 10, subject: 'Chemistry',           location: 'Business Bay',         price: 105, spaces: 5 }
-            ],
-            cart: [],
-            showCart: false
-        };
-    },
-
-    computed: {
-        cartTotal() {
-            return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        },
-
-        cartItemCount() {
-            return this.cart.reduce((sum, item) => sum + item.quantity, 0);
-        }
-    },
-
-    methods: {
-        addToCart(lessonId) {
-            const lesson = this.lessons.find(l => l.id === lessonId);
-            if (lesson && lesson.spaces > 0) {
-                lesson.spaces--;
-                const existingItem = this.cart.find(item => item.id === lessonId);
-                if (existingItem) {
-                    existingItem.quantity++;
-                } else {
-                    this.cart.push({ ...lesson, quantity: 1 });
-                }
-            }
-        },
-
-        removeFromCart(lessonId) {
-            const cartItem = this.cart.find(item => item.id === lessonId);
-            if (cartItem) {
-                const lesson = this.lessons.find(l => l.id === lessonId);
-                lesson.spaces += cartItem.quantity;
-                this.cart = this.cart.filter(item => item.id !== lessonId);
-            }
-        }
-    }
-}).mount('#app');
-</script>
-
-/* STYLES.CSS - COMMIT 2 - Add these new styles */
-<style>
-/* ... Previous styles from Commit 1 ... */
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 30px;
-    margin-bottom: 40px;
-}
-
-.cart-btn {
-    padding: 14px 28px;
-    font-size: 1.1rem;
-}
-
-button:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.sold-out {
-    color: #FF4444;
-    font-weight: 700;
-}
-
-.cart-container h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    border-bottom: 2px solid var(--pure-black);
-    padding-bottom: 20px;
-    margin-bottom: 30px;
-}
-
-.cart-empty {
-    text-align: center;
-    padding: 60px 40px;
-    color: var(--medium-grey);
-    border: 2px dashed var(--pure-black);
-    border-radius: 8px;
-    font-size: 1.2rem;
-}
-
-.cart-item {
-    background-color: var(--pure-white);
-    border: 2px solid var(--pure-black);
-    border-radius: 8px;
-    padding: 25px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.cart-item-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.cart-item-icon {
-    font-size: 2rem;
-}
-
-.cart-item-details h4 {
-    font-size: 1.3rem;
-    margin-bottom: 8px;
-}
-
-.cart-item-details p {
-    color: var(--medium-grey);
-    margin-bottom: 4px;
-}
-
-.cart-item-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 12px;
-}
-
-.cart-item-price {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.remove-btn {
-    background-color: var(--pure-white);
-    color: #FF4444;
-    border: 2px solid #FF4444;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-}
-
-.remove-btn:hover {
-    background-color: #FF4444;
-    color: var(--pure-white);
-}
-
-.cart-total {
-    background-color: var(--pure-white);
-    padding: 30px;
-    border: 2px solid var(--pure-black);
-    border-radius: 8px;
-    margin-top: 30px;
-}
-
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.5rem;
-}
-
-.total-label {
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.total-amount {
-    font-weight: 700;
-    font-size: 2rem;
-}
-</style>
