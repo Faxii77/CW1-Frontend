@@ -1,3 +1,4 @@
+// APP.JS - COMMIT 7 - COMPLETE
 const { createApp } = Vue;
 
 createApp({
@@ -20,7 +21,6 @@ createApp({
             searchQuery: '',
             sortBy: 'subject',
             sortOrder: 'asc',
-            // NEW: Order form data
             order: {
                 firstName: '',
                 lastName: '',
@@ -108,7 +108,6 @@ createApp({
             }
         },
 
-        // NEW: Form validation
         checkFormValidity() {
             const requiredFields = ['firstName', 'lastName', 'address', 'city', 'state', 'zip'];
             this.errors = {};

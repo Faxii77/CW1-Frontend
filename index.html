@@ -1,3 +1,4 @@
+<!-- ==================== INDEX.HTML - COMMIT 7 ==================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,7 +74,7 @@
 
         <!-- Cart View -->
         <div v-else class="cart-container">
-            <h2>Shopping Cart</h2>
+            <h2>Shopping Cart & Checkout</h2>
             
             <div v-if="cart.length === 0" class="cart-empty">
                 Your cart is empty. Add some lessons to proceed!
@@ -86,7 +87,6 @@
                         <div class="cart-item-details">
                             <h4>{{ item.subject }}</h4>
                             <p>{{ item.location }} - Price: £{{ item.price }}</p>
-                            <!-- CHANGED: Added quantity controls -->
                             <div class="cart-item-quantity">
                                 <button class="quantity-btn" @click="decreaseQuantity(item.id)">−</button>
                                 <span>{{ item.quantity }}</span>
@@ -100,35 +100,37 @@
                     </div>
                 </div>
 
+                <!-- Checkout Form -->
                 <div class="cart-total">
+                    <div class="total-row">
+                        <span class="total-label">Total Due:</span>
+                        <span class="total-amount">£{{ cartTotal }}</span>
+                    </div>
+
                     <div class="checkout-form">
                         <h3>Customer Details</h3>
 
                         <div class="form-group">
                             <label>First Name: *</label>
-                            <input type="text" v-model="order.firstName" @blur="checkFormValidity" 
-                                placeholder="Enter first name" :class="{ error: errors.firstName }">
+                            <input type="text" v-model="order.firstName" @blur="checkFormValidity" placeholder="Enter first name" :class="{ error: errors.firstName }">
                             <div v-if="errors.firstName" class="error-message">{{ errors.firstName }}</div>
                         </div>
 
                         <div class="form-group">
                             <label>Last Name: *</label>
-                            <input type="text" v-model="order.lastName" @blur="checkFormValidity" 
-                                placeholder="Enter last name" :class="{ error: errors.lastName }">
+                            <input type="text" v-model="order.lastName" @blur="checkFormValidity" placeholder="Enter last name" :class="{ error: errors.lastName }">
                             <div v-if="errors.lastName" class="error-message">{{ errors.lastName }}</div>
                         </div>
 
                         <div class="form-group">
                             <label>Address: *</label>
-                            <input type="text" v-model="order.address" @blur="checkFormValidity" 
-                                placeholder="Enter address" :class="{ error: errors.address }">
+                            <input type="text" v-model="order.address" @blur="checkFormValidity" placeholder="Enter address" :class="{ error: errors.address }">
                             <div v-if="errors.address" class="error-message">{{ errors.address }}</div>
                         </div>
 
                         <div class="form-group">
                             <label>City: *</label>
-                            <input type="text" v-model="order.city" @blur="checkFormValidity" 
-                                placeholder="Enter city" :class="{ error: errors.city }">
+                            <input type="text" v-model="order.city" @blur="checkFormValidity" placeholder="Enter city" :class="{ error: errors.city }">
                             <div v-if="errors.city" class="error-message">{{ errors.city }}</div>
                         </div>
 
@@ -143,8 +145,7 @@
 
                         <div class="form-group">
                             <label>Zip/Postal Code: *</label>
-                            <input type="text" v-model="order.zip" @blur="checkFormValidity" 
-                                placeholder="Enter zip code" :class="{ error: errors.zip }">
+                            <input type="text" v-model="order.zip" @blur="checkFormValidity" placeholder="Enter zip code" :class="{ error: errors.zip }">
                             <div v-if="errors.zip" class="error-message">{{ errors.zip }}</div>
                         </div>
 
@@ -164,12 +165,24 @@
                                 <label for="business">Business</label>
                             </div>
                         </div>
-                    </div>
-                    <div class="total-row">
-                        <span class="total-label">Total Due:</span>
-                        <span class="total-amount">£{{ cartTotal }}</span>
+
+                        <!-- NEW IN COMMIT 7: Order Summary -->
+                        <div class="order-summary">
+                            <h3>Order Summary</h3>
+                            <p><strong>First Name:</strong> {{ order.firstName || 'N/A' }}</p>
+                            <p><strong>Last Name:</strong> {{ order.lastName || 'N/A' }}</p>
+                            <p><strong>Address:</strong> {{ order.address || 'N/A' }}</p>
+                            <p><strong>City:</strong> {{ order.city || 'N/A' }}</p>
+                            <p><strong>State:</strong> {{ order.state || 'N/A' }}</p>
+                            <p><strong>Zip:</strong> {{ order.zip || 'N/A' }}</p>
+                            <p><strong>Delivery Method:</strong> {{ order.method }}</p>
+                            <p><strong>Gift:</strong> {{ order.gift ? 'Yes' : 'No' }}</p>
+                            <p><strong>Items in Cart:</strong> {{ cartItemCount }}</p>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
