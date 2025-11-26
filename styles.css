@@ -132,7 +132,6 @@ input.error {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 30px;
-    /* border-bottom: 2px solid var(--pure-black);  <-- Removed line */
     margin-bottom: 40px;
 }
 
@@ -464,6 +463,56 @@ input.error {
     border: 2px solid var(--pure-black);
     border-radius: 8px;
     margin-top: 30px;
+}
+
+.checkbox-group {
+    margin: 20px 0;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.radio-group {
+    margin: 20px 0;
+}
+
+.radio-group-label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--pure-black);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.radio-inline {
+    margin: 10px 0;
+}
+
+.radio-inline label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.radio-inline input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
 }
 
 .total-row {
