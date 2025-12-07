@@ -3,16 +3,22 @@ const { createApp } = Vue;
 createApp({
     data() {
         return {
+            // Lessons and cart data
             lessons: [],
             cart: [],
             showCart: false,
+            
+            // Sorting and filtering
             sortBy: 'subject',
             sortOrder: 'asc',
             searchQuery: '',
+            searchTimeout: null,
+            
+            // UI states
             orderConfirmed: false,
             isLoading: true,
-            searchTimeout: null,
 
+            // Order form data
             order: {
                 firstName: '',
                 lastName: '',
@@ -23,20 +29,29 @@ createApp({
                 method: 'Home'
             },
 
-            states: ['Fujairah', 'Umm al Quwain', 'Ras al Khaimah', 'Sharjah', 'Abu Dhabi', 'Ajman', 'Dubai'],
+            // UAE states list
+            states: [
+                'Fujairah', 'Umm al Quwain', 'Ras al Khaimah',
+                'Sharjah', 'Abu Dhabi', 'Ajman', 'Dubai'
+            ],
+
+            // Form validation
             errors: {},
             isFormValid: false,
+
+            // Backend API URL
             apiUrl: 'https://cw1-backend-1-c9h3.onrender.com'
         };
     },
 
     computed: {
+        // Sort lessons based on selected criteria and order
         sortedLessons() {
             return [...this.lessons].sort((a, b) => {
                 let A = a[this.sortBy], B = b[this.sortBy];
-                if (typeof A === 'string') { 
-                    A = A.toLowerCase(); 
-                    B = B.toLowerCase(); 
+                if (typeof A === 'string') {
+                    A = A.toLowerCase();
+                    B = B.toLowerCase();
                 }
                 if (A > B) return this.sortOrder === 'asc' ? 1 : -1;
                 if (A < B) return this.sortOrder === 'asc' ? -1 : 1;
@@ -44,240 +59,187 @@ createApp({
             });
         },
 
+        // Filter lessons based on search query
         filteredLessons() {
-            if (!this.searchQuery.trim()) return this.sortedLessons;
-            return this.sortedLessons;
+            const q = this.searchQuery.toLowerCase().trim();
+            if (!q) return this.sortedLessons;
+
+            return this.sortedLessons.filter(l =>
+                l.subject.toLowerCase().includes(q) ||
+                l.location.toLowerCase().includes(q) ||
+                String(l.price).includes(q) ||
+                String(l.spaces).includes(q)
+            );
         },
 
+        // Calculate total cart price
         cartTotal() {
             return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         },
 
+        // Calculate total items in cart
         cartItemCount() {
             return this.cart.reduce((sum, item) => sum + item.quantity, 0);
         }
     },
 
     methods: {
-        // LOAD LESSONS FROM SERVER
+        // Fetch all lessons from backend
         async fetchLessons() {
             this.isLoading = true;
             try {
                 const response = await fetch(`${this.apiUrl}/lessons`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
                 const data = await response.json();
                 this.lessons = data;
-                console.log('✓ Loaded lessons:', data.length);
-                
+                console.log('✓ Lessons loaded. Sample image URL:', data[0]?.image);
             } catch (error) {
-                console.error("Cannot load lessons from server:", error);
-                alert("Cannot connect to server. Please make sure the server is running on port 3000.");
+                console.error('Failed to fetch lessons:', error);
+                alert("Cannot connect to server.");
             } finally {
                 this.isLoading = false;
             }
         },
 
-        // REAL-TIME SEARCH WITH DEBOUNCING
+        // Search lessons with debounce
         async searchLessons() {
-            // Clear existing timeout
-            if (this.searchTimeout) {
-                clearTimeout(this.searchTimeout);
-            }
+            if (this.searchTimeout) clearTimeout(this.searchTimeout);
 
             // If search is empty, reload all lessons
             if (!this.searchQuery.trim()) {
-                this.fetchLessons();
+                await this.fetchLessons();
                 return;
             }
 
-            // Debounce: wait 300ms after user stops typing
+            // Debounce search by 300ms
             this.searchTimeout = setTimeout(async () => {
                 try {
-                    const query = encodeURIComponent(this.searchQuery.trim());
-                    const response = await fetch(`${this.apiUrl}/search?q=${query}`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`Search failed: ${response.status}`);
+                    const q = encodeURIComponent(this.searchQuery.trim());
+                    const response = await fetch(`${this.apiUrl}/search?q=${q}`);
+                    const data = await response.json();
+
+                    if (data.length) {
+                        this.lessons = data;
                     }
-                    
-                    const results = await response.json();
-                    this.lessons = results;
-                    console.log('✓ Search results:', results.length);
-                    
                 } catch (error) {
-                    console.error("Search error:", error);
-                    alert("Search failed. Please try again.");
+                    console.error('Search error:', error);
                 }
             }, 300);
         },
 
-        // UPDATE LESSON SPACES IN DATABASE
+        // Update lesson available spaces in database
         async updateLessonSpaces(id, newSpaces) {
             try {
                 const response = await fetch(`${this.apiUrl}/lessons/${id}`, {
                     method: "PUT",
-                    headers: { 
-                        "Content-Type": "application/json" 
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ spaces: newSpaces })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Update failed: ${response.status}`);
-                }
-
                 const result = await response.json();
-                console.log('✓ Updated lesson spaces:', result);
                 return result.success;
-                
             } catch (error) {
-                console.error("Error updating lesson:", error);
-                alert("Failed to update lesson. Please try again.");
+                alert("Failed to update lesson.");
                 return false;
             }
         },
 
-        // IMAGE ERROR HANDLER
+        // Handle image loading errors with placeholder fallback
         imgError(e) {
-            e.target.src = "images/placeholder.png";
+            e.target.src = `${this.apiUrl}/images/placeholder.png`;
         },
 
-        // TOGGLE SORT ORDER
+        // Toggle between ascending and descending sort order
         toggleSortOrder() {
             this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
         },
 
-        // ADD LESSON TO CART
+        // Add lesson to cart
         async addToCart(id) {
             const lesson = this.lessons.find(l => l.id === id);
-            
-            if (!lesson) {
-                console.error("Lesson not found:", id);
-                return;
-            }
-            
-            if (lesson.spaces === 0) {
-                alert("Sorry, this lesson is sold out!");
-                return;
-            }
+            if (!lesson || lesson.spaces <= 0) return alert("Sold out!");
 
-            // Update database first
             const success = await this.updateLessonSpaces(id, lesson.spaces - 1);
-            
-            if (!success) {
-                alert("Failed to add to cart. Please try again.");
-                return;
-            }
+            if (!success) return;
 
-            // local state
             lesson.spaces--;
 
-            // Add to cart or increase quantity
-            const existing = this.cart.find(item => item.id === id);
-            if (existing) {
-                existing.quantity++;
-            } else {
-                this.cart.push({ ...lesson, quantity: 1 });
-            }
-
-            console.log('✓ Added to cart:', lesson.subject);
+            const existing = this.cart.find(i => i.id === id);
+            existing ? existing.quantity++ : this.cart.push({ ...lesson, quantity: 1 });
         },
 
-        // REMOVE ITEM FROM CART
+        // Remove all quantities of a lesson from cart
         async removeFromCart(id) {
-            const cartItem = this.cart.find(item => item.id === id);
-            if (!cartItem) return;
-
+            const item = this.cart.find(i => i.id === id);
             const lesson = this.lessons.find(l => l.id === id);
-            if (!lesson) return;
+            if (!item || !lesson) return;
 
-            // Restore spaces in database
-            const success = await this.updateLessonSpaces(id, lesson.spaces + cartItem.quantity);
+            const success = await this.updateLessonSpaces(id, lesson.spaces + item.quantity);
+            if (!success) return;
 
-            if (success) {
-                lesson.spaces += cartItem.quantity;
-                this.cart = this.cart.filter(item => item.id !== id);
-                console.log('✓ Removed from cart:', lesson.subject);
-            } else {
-                alert("Failed to remove item. Please try again.");
-            }
+            lesson.spaces += item.quantity;
+            this.cart = this.cart.filter(c => c.id !== id);
         },
 
-        // DECREASE QUANTITY IN CART
+        // Decrease quantity of a lesson in cart
         async decreaseQuantity(id) {
-            const cartItem = this.cart.find(item => item.id === id);
+            const item = this.cart.find(i => i.id === id);
             const lesson = this.lessons.find(l => l.id === id);
 
-            if (!cartItem || !lesson) return;
-
-            if (cartItem.quantity > 1) {
+            if (item.quantity > 1) {
                 const success = await this.updateLessonSpaces(id, lesson.spaces + 1);
-                
-                if (!success) {
-                    alert("Failed to update quantity. Please try again.");
-                    return;
-                }
-                
-                cartItem.quantity--;
+                if (!success) return;
+
+                item.quantity--;
                 lesson.spaces++;
-                console.log('✓ Decreased quantity:', lesson.subject);
             } else {
-                // Remove if quantity is 1
                 this.removeFromCart(id);
             }
         },
 
-        // FORM VALIDATION
+        // Validate checkout form fields
         checkFormValidity() {
-            const required = ["firstName", "lastName", "address", "state", "zip"];
             this.errors = {};
+            const required = ["firstName", "lastName", "address", "state", "zip"];
 
             // Check required fields
-            required.forEach(field => {
-                if (!this.order[field] || this.order[field].trim() === "") {
-                    this.errors[field] = "This field is required";
-                }
+            required.forEach(f => {
+                if (!this.order[f]) this.errors[f] = "Required";
             });
 
-            // Validate first name (letters and spaces only)
-            if (this.order.firstName && !/^[A-Za-z\s]+$/.test(this.order.firstName)) {
-                this.errors.firstName = "Only letters and spaces allowed";
+            // Validate first name - letters only
+            if (this.order.firstName && !/^[a-zA-Z\s\-']+$/.test(this.order.firstName)) {
+                this.errors.firstName = "Letters only, no numbers";
             }
 
-            // Validate last name (letters and spaces only)
-            if (this.order.lastName && !/^[A-Za-z\s]+$/.test(this.order.lastName)) {
-                this.errors.lastName = "Only letters and spaces allowed";
+            // Validate last name - letters only
+            if (this.order.lastName && !/^[a-zA-Z\s\-']+$/.test(this.order.lastName)) {
+                this.errors.lastName = "Letters only, no numbers";
             }
 
-            // Validate zip code (4-10 digits)
+            // Validate address - must contain letters and be at least 5 characters
+            if (this.order.address) {
+                if (!/[a-zA-Z]/.test(this.order.address)) {
+                    this.errors.address = "Address must contain letters";
+                }
+                if (this.order.address.length < 5) {
+                    this.errors.address = "Address too short";
+                }
+            }
+
+            // Validate ZIP code - 4 to 10 digits only
             if (this.order.zip && !/^\d{4,10}$/.test(this.order.zip)) {
-                this.errors.zip = "Enter 4-10 digits";
+                this.errors.zip = "Enter 4–10 digits";
             }
 
-            // Form is valid if no errors
             this.isFormValid = Object.keys(this.errors).length === 0;
         },
 
-        // SUBMIT ORDER
+        // Submit order to backend
         async submitOrder() {
-            // Validate form
             this.checkFormValidity();
-            
-            if (!this.isFormValid) {
-                alert("Please fill all required fields correctly.");
-                return;
-            }
+            if (!this.isFormValid) return alert("Fix the form errors.");
+            if (!this.cart.length) return alert("Cart is empty.");
 
-            if (this.cart.length === 0) {
-                alert("Your cart is empty.");
-                return;
-            }
-
-            // Prepare order data
             const orderData = {
                 ...this.order,
                 items: this.cart,
@@ -288,26 +250,19 @@ createApp({
             try {
                 const response = await fetch(`${this.apiUrl}/orders`, {
                     method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json" 
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(orderData)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Order failed: ${response.status}`);
-                }
-
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    alert(`✓ Order placed successfully!\n\nOrder ID: ${result.orderId}\nTotal: £${this.cartTotal}\n\nThank you for your order!`);
-                    
+                    alert("✓ Order placed successfully!");
+
                     // Clear cart and reset form
                     this.cart = [];
                     this.orderConfirmed = true;
-                    
-                    // Reset form
+
                     this.order = {
                         firstName: '',
                         lastName: '',
@@ -317,28 +272,21 @@ createApp({
                         gift: false,
                         method: 'Home'
                     };
-                    
-                    // Go back to lessons page
+
+                    // Close cart after confirmation
                     setTimeout(() => {
                         this.showCart = false;
                         this.orderConfirmed = false;
-                    }, 2000);
-                    
-                    console.log('✓ Order submitted:', result.orderId);
-                } else {
-                    throw new Error("Order failed");
+                    }, 1500);
                 }
-                
             } catch (error) {
-                console.error("Order submission error:", error);
-                alert("Failed to place order. Please try again.");
+                alert("Order failed.");
             }
         }
     },
 
-    // LIFECYCLE: Load lessons when app starts
+    // Initialize app when mounted
     mounted() {
-        console.log(' App initialized');
         this.fetchLessons();
     }
 }).mount("#app");

@@ -65,7 +65,7 @@
                      class="lesson-card">
 
                     <div class="lesson-header">
-                        <img :src="`images/${lesson.icon}`"
+                        <img :src="lesson.image"
                              :alt="lesson.subject"
                              class="lesson-icon"
                              @error="imgError">
@@ -132,7 +132,7 @@
                      class="cart-item">
 
                     <div class="cart-item-left">
-                        <img :src="`images/${item.icon}`"
+                        <img :src="item.image"
                              :alt="item.subject"
                              class="cart-item-icon"
                              @error="imgError">
